@@ -1,4 +1,4 @@
-class Player
+class Guesser
   attr_accessor :chosen_colors, :turns
 
   def initialize
@@ -31,13 +31,19 @@ class Player
   end
 end
 
+class Player < Guesser
+  def initialize
+    super
+    puts 'hehe'
+  end
+end
+
 class Game
   attr_accessor :correct_sequence, :turns, :game_active
 
   @@color_options = %w[red orange yellow green blue purple]
 
-  def initialize(player) # maybe can put chosen sequence in here from player
-    @player = player
+  def initialize
     @correct_sequence = pick_sequence
     @game_active = true
     p "For debugging only: #{@correct_sequence}"
@@ -47,7 +53,17 @@ class Game
 
   def start_message
     puts 'Welcome to MasterMind.'
+    puts "Do you want to be the guesser or creator?. Type 'g' or 'c'."
+    answer = gets.chomp
+    if answer.downcase == 'g'
+      puts 'Okay, you are the guesser'
+      create_player
+    end
     puts 'Choose four colors. The options are red, orange, yellow, green, blue, and purple.'
+  end
+
+  def create_player
+    @player = Player.new
   end
 
   def self.color_options
@@ -91,5 +107,4 @@ class Game
   end
 end
 
-player = Player.new
-Game.new(player)
+Game.new
