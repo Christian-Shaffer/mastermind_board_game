@@ -140,11 +140,11 @@ class Computer < Guesser
 
   def request_hidden_code
     puts 'Human! Write the codes..'
-    p Game.correct_sequence
-    puts 'Write them at a a time. Start with 1, then 2, etc.'
+    puts 'Write them one at a a time. Start with 1, then 2, etc.'
+    puts 'No repeats or spelling mistakes. And make sure each choice is one of the six valid colors.'
     while Game.correct_sequence.length < 4
       choice = gets.chomp
-      if valid_secret_code?(choice)
+      if valid_secret_code?(choice.downcase)
         Game.correct_sequence << choice
       else
         puts 'Invalid. Needs to be one of the six valid colors without spelling mistakes or repeats.'
