@@ -97,6 +97,14 @@ class Guesser
       false
     end
   end
+
+  def valid_secret_code?(choice)
+    if !Game.correct_sequence.include?(choice) && Game.color_options.include?(choice)
+      true
+    else
+      false
+    end
+  end
 end
 
 class Player < Guesser
@@ -136,7 +144,7 @@ class Computer < Guesser
     puts 'Write them at a a time. Start with 1, then 2, etc.'
     while Game.correct_sequence.length < 4
       choice = gets.chomp
-      if valid_guess?(choice)
+      if valid_secret_code?(choice)
         Game.correct_sequence << choice
       else
         puts 'Invalid. Needs to be one of the six valid colors without spelling mistakes or repeats.'
