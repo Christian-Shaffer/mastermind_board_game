@@ -1,18 +1,25 @@
 class Game
-  attr_accessor :correct_sequence, :turns, :game_active
+  attr_accessor :turns, :game_active
 
   @@color_options = %w[red orange yellow green blue purple]
+  @@correct_sequence = []
 
   def initialize
-    @correct_sequence = Game.pick_sequence
     @game_active = true
-    p "For debugging only: #{@correct_sequence}"
     start_message
     start_game
   end
 
   def self.color_options
     @@color_options
+  end
+
+  def self.correct_sequence
+    @@correct_sequence
+  end
+
+  def self.correct_sequence=(correct_sequence)
+    @@correct_sequence = correct_sequence
   end
 
   def start_message
@@ -37,7 +44,7 @@ class Game
     @guesser = Computer.new
   end
 
-  def self.pick_sequence
+  def self.pick_random_sequence
     shuffled = @@color_options.shuffle
     shuffled[0..3]
   end
@@ -51,11 +58,11 @@ class Game
   end
 
   def check_game_state
-    if @guesser.chosen_colors == @correct_sequence
+    if @guesser.chosen_colors == @@correct_sequence
       puts 'Winner!'
       @game_active = false
     elsif @guesser.turns == 12 && game_active
-      puts "Out of turns. The answer was: #{@correct_sequence}."
+      puts "Out of turns. The answer was: #{@@correct_sequence}."
       @game_active = false
     end
   end
@@ -64,9 +71,9 @@ class Game
     correct = 0
     right_color = 0
     @guesser.chosen_colors.each_index do |index|
-      if @guesser.chosen_colors[index] == correct_sequence[index]
+      if @guesser.chosen_colors[index] == @@correct_sequence[index]
         correct += 1
-      elsif correct_sequence.include?(@guesser.chosen_colors[index]) && @guesser.chosen_colors[index] != correct_sequence[index]
+      elsif @@correct_sequence.include?(@guesser.chosen_colors[index]) && @guesser.chosen_colors[index] != @@correct_sequence[index]
         right_color += 1
       end
     end
@@ -95,6 +102,8 @@ end
 class Player < Guesser
   def initialize
     super
+    Game.correct_sequence = Game.pick_random_sequence
+    p "For debugging only: #{Game.correct_sequence}"
     puts 'hehe'
   end
 
@@ -117,16 +126,33 @@ end
 class Computer < Guesser
   def initialize
     super
+    request_hidden_code
     puts 'beepboop'
+  end
+
+  def request_hidden_code
+    puts 'Human! Write the codes..'
+    p Game.correct_sequence
+    puts 'Write them at a a time. Start with 1, then 2, etc.'
+    while Game.correct_sequence.length < 4
+      choice = gets.chomp
+      if valid_guess?(choice)
+        Game.correct_sequence << choice
+      else
+        puts 'Invalid. Needs to be one of the six valid colors without spelling mistakes or repeats.'
+      end
+    end
+    puts "You chose: #{Game.correct_sequence}"
+    Game.correct_sequence
   end
 
   def make_guess
     #sleep 1
     puts 'Okay, computer.. Guess one at a a time. Start with 1, then 2, etc.'
-    @chosen_colors = Game.pick_sequence
+    @chosen_colors = Game.pick_random_sequence
     puts "Computer: I guess #{@chosen_colors}."
     @turns += 1
-    puts @turns
+    #puts @turns
   end
 end
 
