@@ -155,12 +155,11 @@ class Computer < Guesser
   end
 
   def make_guess
-    #sleep 1
     puts 'Okay, computer.. Guess one at a a time. Start with 1, then 2, etc.'
+    sleep 1
     @chosen_colors = Game.pick_random_sequence
     puts "Computer: I guess #{@chosen_colors}."
     @turns += 1
-    #puts @turns
   end
 end
 
